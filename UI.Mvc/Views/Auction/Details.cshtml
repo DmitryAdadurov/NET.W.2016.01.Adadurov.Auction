@@ -7,8 +7,8 @@
     bool isUser = User.IsInRole("user");
     bool isAdmin = User.IsInRole("admin");
     bool isEnd = (DateTime.Now > Model.AuctionEndDate);
-    bool isWinnerOrCreator = ((Model.Seller == User.Identity.Name) || (LastBid?.UserName == User.Identity.Name));
-    bool isWinner = (LastBid?.UserName == User.Identity.Name);
+    bool isWinnerOrCreator = ((Model.Seller == User.Identity.Name) || (LastBid?.UserName == User.Identity.Name)) && isEnd;
+    bool isWinner = (LastBid?.UserName == User.Identity.Name) && isEnd;
 }
 
 <div class="row">
