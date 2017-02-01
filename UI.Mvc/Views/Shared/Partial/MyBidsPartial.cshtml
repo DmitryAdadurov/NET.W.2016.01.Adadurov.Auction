@@ -1,0 +1,11 @@
+﻿@model IEnumerable<UI.Mvc.Models.Bid>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@Html.ActionLink($"#{item.LotId.ToString()}", "Details", new { id = item.LotId })</td>
+        <td>@item.MoneyAmount.ToString()</td>
+        <td>@item.BidDate.ToLongDateString()</td>
+    </tr>
+}
+

@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Sign in</h2>
+        <hr />
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "navbar-form navbar-right" }))
+        {
+            @Html.TextBox("login", null, new { placeholder = "Login", @class = "form-control" })
+            @Html.Password("password", null, new { placeholder = "Password", @class = "form-control" })
+            <br /><br />
+            <button class="btn btn-default" type="submit">Sign In</button>
+        }
+    </div>
+</div>

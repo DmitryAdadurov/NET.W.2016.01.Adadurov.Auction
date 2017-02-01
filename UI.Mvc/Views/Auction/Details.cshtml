@@ -1,0 +1,178 @@
+﻿@model UI.Mvc.Models.AuctionDetail
+
+@{
+    ViewBag.Title = Model.Title;
+    var LastBid = Model.Bids.OrderBy(t => t.MoneyAmount).LastOrDefault();
+    var LastComments = Model.Comments.OrderByDescending(t => t.PubDate).Take(10);
+    bool isUser = User.IsInRole("user");
+    bool isAdmin = User.IsInRole("admin");
+}
+
+<div class="row">
+    <h2>@Model.Title</h2>
+    @if (isAdmin)
+    {
+        <small>@Html.ActionLink("Remove auction", "Delete", "Auction", new { id = Model.Id }, null)</small>
+    }
+    <hr />
+    <div class="col-md-4">
+        @if (Model.Photos != Enumerable.Empty<string>())
+        {
+            foreach (var photo in Model.Photos)
+            {
+                <img class="photo-thumb img-thumbnail" src="@photo" alt="@Model.Title" data-url="@photo" />
+            }
+        }
+        else
+        {
+            <img class="photo-thumb img-thumbnail" src="~/Content/no_photo.jpg" alt="@Model.Title" />
+        }
+
+    </div>
+    <div class="col-md-8">
+        @if (Model.Photos != Enumerable.Empty<string>())
+        {
+            <img src="@Model.Photos.FirstOrDefault()" alt="@Model.Title" class="photo-full" />
+        }
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Description</h4>
+        <p class="lot-description">
+            @Model.Description
+        </p>
+    </div>
+    <div class="col-md-6">
+        <p><b>Started:</b> @Model.CreationDate.ToLongDateString()</p>
+        <p><b>Ends:</b> @Model.AuctionEndDate.ToLongDateString()</p>
+        <br /><br />
+        <p><b>Seller: </b>@Model.Seller</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Current price: $@Model.CurrentPrice</h3>
+        <hr />
+        @if (Model.Seller != User.Identity.Name && Model.AuctionEndDate > DateTime.Now && (isUser || isAdmin))
+        {
+            if (LastBid == null || LastBid.UserName != User.Identity.Name)
+            {
+                <h3>Place bid</h3>
+                using (Html.BeginForm("Bet", "Auction", new { auctionId = Model.Id }, FormMethod.Post))
+                {
+                    @Html.Label("betValue", "Your bet", new { @class = "control-label" })
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        @Html.TextBox("betValue", Model.CurrentPrice + 0.5m, new { @class = "form-control", @data_val = "true", @data_val_number = "Bet value must be a number.", @data_val_range = "Wrong bet value.", @data_val_range_max = "99999999", @data_val_range_min = LastBid?.MoneyAmount.ToString() ?? Model.CurrentPrice.ToString(), @data_val_required = "Bet value cant'be blank." })
+                    </div>
+                    @Html.ValidationMessage("betValue", new { @class = "alert-danger", role = "alert" })
+                    <br />
+                    <button type="submit" class="btn btn-success">Place bet</button>
+                }
+            }
+            else
+            {
+                <span>Your bid of $@LastBid.MoneyAmount is the highest!</span>
+            }
+        }
+        else
+        {
+            <span>You can not leave the bet.</span>
+        }
+    </div>
+    <div class="col-md-4">
+        <h3>Bids</h3>
+        <hr />
+        <p>
+            @if (Model.Bids.Count() > 0)
+            {
+                foreach (var item in Model.Bids)
+                {
+                    @item.BidDate.ToLongDateString() <b><i>$@item.MoneyAmount.ToString()</i></b>
+                    <br />
+                }
+            }
+            else
+            {
+                <b>There is no bids.</b>
+            }
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Comments</h3>
+        <hr />
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="cssload-container" id="ajax-loader">
+                <div class="cssload-whirlpool"></div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Post your comment</h3>
+                </div>
+                <div class="panel-body">
+                    @using (Ajax.BeginForm("Add", "Comment", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertBefore, LoadingElementId = "ajax-loader" }))
+                    {
+                        @Html.TextArea("text", new { @class = "form-control full-width" });
+                        @Html.Hidden("lotid", Model.Id);
+                        <br />
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div>
+                <span class="alert alert-warning"><b>Sign in to leave comments.</b></span>
+                <br /><br />
+            </div>
+        }
+
+        <div id="comments">
+            @Html.Partial("Partial/CommentsPartial", LastComments)
+        </div>
+        <div>
+            @using (Ajax.BeginForm("GetComments", "Comment", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertAfter, LoadingElementId = "ajax-loader", OnSuccess = "setPageNum" }))
+            {
+                @Html.Hidden("lotid", Model.Id);
+                <input type="hidden" value="2" id="comments-page" name="page" />
+                <button type="submit" class="btn btn-default">More</button>
+            }
+        </div>
+        <br /><br />
+    </div>
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.photo-thumb').click(function () {
+                var url = $(this).data('url');
+                $('.photo-full').fadeOut(200, function () {
+                    $(this).attr('src', url).fadeIn(200);
+                });
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function setPageNum() {
+            var pageNum = $('#comments-page').attr('value');
+            $('#comments-page').attr('value', ++pageNum);
+        }
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery-ajax")
+}

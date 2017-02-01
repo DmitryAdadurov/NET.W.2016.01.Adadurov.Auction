@@ -1,0 +1,12 @@
+﻿@model UI.Mvc.Models.Comment
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">@Model.UserName <small>(@Model.PubDate.ToLongDateString())</small></h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            @Model.Text
+        </p>
+    </div>
+</div>

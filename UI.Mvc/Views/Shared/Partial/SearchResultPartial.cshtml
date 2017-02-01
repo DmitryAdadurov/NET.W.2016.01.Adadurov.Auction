@@ -1,0 +1,43 @@
+﻿@model UI.Mvc.Models.LotModel
+
+@{ 
+    string Title = Model.Title;
+    string Description = Model.Description;
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <a href="/Auction/Details/@Model.Id" class="thumbnail">
+            @if (Model.Photos != Enumerable.Empty<string>())
+            {
+                <img src="@Model.Photos.FirstOrDefault()" alt="@Model.Title" />
+            }
+            else
+            {
+                <img src="~/Content/no_photo.jpg" alt="@Model.Title">
+            }
+        </a>
+    </div>
+    <div class="col-md-2">
+            @if (Model.Title.Length > 100)
+            {
+                Title = Model.Title.Remove(100);
+            }
+             <a href="/Auction/Details/@Model.Id"><h4>@Title</h4></a>
+    </div>
+    <div class="col-md-4">
+        <p>
+            @if (Model.Description.Length > 255)
+            {
+                Description = Model.Description.Remove(255);
+            }
+             @Description
+        </p>
+    </div>
+    <div class="col-md-2">
+        <span>@Model.CreationDate.ToLongDateString()</span>
+    </div>
+    <div class="col-md-2">
+        <span>@Model.EndDate.ToLongDateString()</span>
+    </div>
+</div>

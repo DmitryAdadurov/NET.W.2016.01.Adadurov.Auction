@@ -1,0 +1,27 @@
+﻿@model IEnumerable<UI.Mvc.Models.LotModel>
+
+
+@foreach (var lot in Model)
+{
+    <div class="col-sm-6 col-md-3">
+        <div class="thumbnail">
+            @if (lot.Photos != Enumerable.Empty<string>())
+            {
+                <img src="@lot.Photos.FirstOrDefault()" alt="@lot.Title">
+            }
+            else
+            {
+                <img src="~/Content/no_photo.jpg" alt="@lot.Title">
+            }
+            <div class="caption">
+                <h4>@lot.Title</h4>
+                <p>
+                    <span class="label label-primary">@lot.CreationDate</span>
+                    <span class="label label-success">@lot.EndDate</span>
+                </p>
+                <p>Current price: <span class="">$@lot.CurrentPrice</span></p>
+                <p>@Html.ActionLink("Details", "Details", "Auction", new { id = lot.Id }, new { @class = "btn btn-info" })</p>
+            </div>
+        </div>
+    </div>
+}

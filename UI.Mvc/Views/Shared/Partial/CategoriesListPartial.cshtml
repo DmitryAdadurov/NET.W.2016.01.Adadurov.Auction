@@ -1,0 +1,16 @@
+﻿@{ 
+    IEnumerable<UI.Mvc.Models.Category> Categories = (IEnumerable<UI.Mvc.Models.Category>)ViewData["Categories"];
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Categories</h3>
+        <hr />
+        <div class="categorie-list">
+            @foreach (var cat in Categories)
+            {
+                @Html.ActionLink(cat.Name, "Find", "Search", new { catId = cat.Id }, new { @class = "categorie-list-item" })
+            }
+        </div><!-- /categorie-list-->
+    </div><!-- /col-md-12-->
+</div><!-- /row-->

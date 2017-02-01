@@ -1,0 +1,29 @@
+﻿@using UI.Mvc.Infrastructure.Pager
+@model UI.Mvc.Models.SearchResult<UI.Mvc.Models.Bid>
+@{
+    ViewBag.Title = "MyBids";
+    string NoResults = ViewData["NoResults"]?.ToString();
+}
+
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">My bids</div>
+
+        <table class="table">
+            @Html.Partial("Partial/MyBidsPartial", Model.SearchResults)
+        </table>
+    </div>
+    @if (string.IsNullOrEmpty(NoResults))
+    {
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                @Html.Pagination(Model.PageCount, Model.CurrentPage, t => Url.Action("MyBids", "Auction", new { page = t }))
+            </div>
+        </div>
+    }
+    else
+    {
+        <h3>@NoResults</h3>
+    }
+</div>
+

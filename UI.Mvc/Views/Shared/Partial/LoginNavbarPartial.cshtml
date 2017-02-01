@@ -1,0 +1,26 @@
+﻿
+@if (User.Identity.IsAuthenticated)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome back, @User.Identity.Name<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="@Url.Action("Create", "Auction")"><span class="glyphicon glyphicon-plus"></span> Sold item</a></li>
+                <li><a href="@Url.Action("My", "Auction")"><span class="glyphicon glyphicon-list"></span> My auctions</a></li>
+                <li><a href="@Url.Action("MyBids", "Auction")"><span class="glyphicon glyphicon-hand-up"></span> My bids</a></li>
+                <li role="separator" class="divider"></li>
+                <li>@Html.ActionLink("Log out", "Logout", "Account", null, null)</li>
+            </ul>
+        </li>
+    </ul>
+}
+else
+{
+    using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "navbar-form navbar-right form-login" }))
+    {
+        @Html.TextBox("login", null, new { placeholder = "Login", @class = "form-control" })
+        @Html.Password("password", null, new { placeholder = "Password", @class = "form-control" })
+        <button class="btn btn-default" type="submit">Sign In</button>
+        @Html.ActionLink("Register", "Register", "Account", null, new { @class = "btn btn-link" })
+    }
+}

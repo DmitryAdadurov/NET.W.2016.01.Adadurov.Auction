@@ -1,0 +1,20 @@
+﻿@model IEnumerable<UI.Mvc.Models.Comment>
+
+@foreach (var item in Model)
+{
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">@item.UserName <small>(@item.PubDate.ToLongDateString())</small></h3>
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Delete", "Delete", "Comment" , new { id = item.Id, auctionId = item.LotId }, null);
+            }
+        </div>
+        <div class="panel-body">
+            <p>
+                @item.Text
+            </p>
+        </div>
+    </div>
+}
+
