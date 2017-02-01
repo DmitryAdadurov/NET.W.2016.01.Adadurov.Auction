@@ -1,0 +1,30 @@
+﻿@model UI.Mvc.Models.AuctionDetail
+
+@if (User.Identity.IsAuthenticated)
+            {
+    <div class="cssload-container" id="ajax-loader">
+        <div class="cssload-whirlpool"></div>
+    </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Post your comment</h3>
+                    </div>
+                    <div class="panel-body">
+                        @using (Ajax.BeginForm("Add", "Comment", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertBefore, LoadingElementId = "ajax-loader" }))
+                        {
+                            @Html.TextArea("text", new { @class = "form-control full-width" });
+                            @Html.Hidden("lotid", Model.Id);
+                            <br />
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        }
+                    </div>
+                </div>
+}
+else
+{
+    <div>
+        <span class="alert alert-warning"><b>Sign in to leave comments.</b></span>
+        <br /><br />
+    </div>
+}

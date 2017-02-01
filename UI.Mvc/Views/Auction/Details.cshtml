@@ -6,6 +6,9 @@
     var LastComments = Model.Comments.OrderByDescending(t => t.PubDate).Take(10);
     bool isUser = User.IsInRole("user");
     bool isAdmin = User.IsInRole("admin");
+    bool isEnd = (DateTime.Now > Model.AuctionEndDate);
+    bool isWinnerOrCreator = ((Model.Seller == User.Identity.Name) || (LastBid?.UserName == User.Identity.Name));
+    bool isWinner = (LastBid?.UserName == User.Identity.Name);
 }
 
 <div class="row">
@@ -58,13 +61,20 @@
     <div class="col-md-4">
         <h3>Current price: $@Model.CurrentPrice</h3>
         <hr />
-        @if (Model.Seller != User.Identity.Name && Model.AuctionEndDate > DateTime.Now && (isUser || isAdmin))
+        @if (isWinner)
         {
-            if (LastBid == null || LastBid.UserName != User.Identity.Name)
+            <h4>You won this auction!</h4>
+            <p>Discuss in comments delivery and payment aspects.</p>
+        }
+        @if (!isEnd || isAdmin)
+        {
+            if (Model.Seller != User.Identity.Name && Model.AuctionEndDate > DateTime.Now && (isUser || isAdmin))
             {
-                <h3>Place bid</h3>
-                using (Html.BeginForm("Bet", "Auction", new { auctionId = Model.Id }, FormMethod.Post))
+                if (LastBid == null || LastBid.UserName != User.Identity.Name)
                 {
+                <h3>Place bid</h3>
+                    using (Html.BeginForm("Bet", "Auction", new { auctionId = Model.Id }, FormMethod.Post))
+                    {
                     @Html.Label("betValue", "Your bet", new { @class = "control-label" })
                     <div class="input-group">
                         <span class="input-group-addon">$</span>
@@ -73,16 +83,23 @@
                     @Html.ValidationMessage("betValue", new { @class = "alert-danger", role = "alert" })
                     <br />
                     <button type="submit" class="btn btn-success">Place bet</button>
+                    }
+                }
+                else
+                {
+                <span>Your bid of $@LastBid.MoneyAmount is the highest!</span>
                 }
             }
             else
             {
-                <span>Your bid of $@LastBid.MoneyAmount is the highest!</span>
+            <span>You can not leave the bet.</span>
             }
         }
         else
         {
-            <span>You can not leave the bet.</span>
+            <h3>Auction end!</h3>
+            <hr />
+            <h4>Final price is $@Model.CurrentPrice</h4>
         }
     </div>
     <div class="col-md-4">
@@ -109,35 +126,24 @@
     <div class="col-md-6">
         <h3>Comments</h3>
         <hr />
-        @if (User.Identity.IsAuthenticated)
+        @if (isEnd)
         {
-            <div class="cssload-container" id="ajax-loader">
-                <div class="cssload-whirlpool"></div>
-            </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Post your comment</h3>
+            if (isWinnerOrCreator)
+            {
+                @Html.Partial("Partial/CommentsInputPartial");
+            }
+            else
+            {
+                <div>
+                    <span class="alert alert-warning"><b>Comments close due to end of this auction.</b></span>
+                    <br /><br />
                 </div>
-                <div class="panel-body">
-                    @using (Ajax.BeginForm("Add", "Comment", new AjaxOptions() { UpdateTargetId = "comments", InsertionMode = InsertionMode.InsertBefore, LoadingElementId = "ajax-loader" }))
-                    {
-                        @Html.TextArea("text", new { @class = "form-control full-width" });
-                        @Html.Hidden("lotid", Model.Id);
-                        <br />
-                        <button type="submit" class="btn btn-primary">Post</button>
-                    }
-                </div>
-            </div>
+            }
         }
         else
         {
-            <div>
-                <span class="alert alert-warning"><b>Sign in to leave comments.</b></span>
-                <br /><br />
-            </div>
+            @Html.Partial("Partial/CommentsInputPartial");
         }
-
         <div id="comments">
             @Html.Partial("Partial/CommentsPartial", LastComments)
         </div>

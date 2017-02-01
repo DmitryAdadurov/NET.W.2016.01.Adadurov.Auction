@@ -354,6 +354,7 @@
     <Content Include="Views\Error\Error.cshtml" />
     <Content Include="Views\Auction\MyBids.cshtml" />
     <Content Include="Views\Shared\Partial\MyBidsPartial.cshtml" />
+    <Content Include="Views\Shared\Partial\CommentsInputPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
