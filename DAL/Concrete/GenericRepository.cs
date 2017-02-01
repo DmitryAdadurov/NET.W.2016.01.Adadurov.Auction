@@ -41,6 +41,11 @@ namespace DAL.Concrete
             Set = context.Set<TEntity>();
         }
 
+        /// <summary>
+        /// Count of entities mathces to condition
+        /// </summary>
+        /// <param name="predicate">Condition</param>
+        /// <returns>Count of entities</returns>
         public int Count(Expression<Func<TDalEntity, bool>> predicate = null)
         {
             if (predicate == null)
@@ -54,6 +59,11 @@ namespace DAL.Concrete
 
         private DbSet<TEntity> Set { get; set; }
 
+        /// <summary>
+        /// Create new entity
+        /// </summary>
+        /// <param name="e">Entity</param>
+        /// <returns>Id of new entity</returns>
         public async Task<int> Create(TDalEntity e)
         {
             if (e.IsNull())
@@ -66,6 +76,11 @@ namespace DAL.Concrete
             return efEntity.Id;
         }
 
+        /// <summary>
+        /// Delete entity
+        /// </summary>
+        /// <param name="e">Entity</param>
+        /// <returns></returns>
         public Task Delete(TDalEntity e)
         {
             if (e.IsNull())
@@ -77,16 +92,20 @@ namespace DAL.Concrete
             return Task.FromResult<object>(null);
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Gets all entities
+        /// </summary>
+        /// <returns>IEnumerable with entities</returns>
         public async Task<IEnumerable<TDalEntity>> GetAll()
         {
             return (await Set.ToListAsync()).ConvertAll(converter.ToDalEntity);
         }
 
+        /// <summary>
+        /// Get entities by predicate
+        /// </summary>
+        /// <param name="f">Conditions</param>
+        /// <returns></returns>
         public async Task<IEnumerable<TDalEntity>> GetByPredicate(Expression<Func<TDalEntity, bool>> f)
         {
             var lambda = ConvertExpression(f);
@@ -104,6 +123,11 @@ namespace DAL.Concrete
             return y;
         }
 
+        /// <summary>
+        /// Update entity
+        /// </summary>
+        /// <param name="e">Entity to update</param>
+        /// <returns></returns>
         public async Task Update(TDalEntity e)
         {
             if (e.IsNull())
@@ -114,6 +138,11 @@ namespace DAL.Concrete
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Check existence of entity by id
+        /// </summary>
+        /// <param name="id">Id of entity</param>
+        /// <returns>true - if exist</returns>
         public async Task<bool> IsExist(int id)
         {
             if (id < 0)
@@ -126,7 +155,14 @@ namespace DAL.Concrete
             else
                 return false;
         }
-
+        
+        /// <summary>
+        /// Gets range of entities
+        /// </summary>
+        /// <param name="skip">Entities to skip</param>
+        /// <param name="take">Entities to take</param>
+        /// <param name="predicate">Conditions</param>
+        /// <returns></returns>
         public async Task<IEnumerable<TDalEntity>> GetRange(int skip, int take = 12, Expression<Func<TDalEntity, bool>> predicate = null)
         {
             if (skip < 0)
@@ -163,6 +199,28 @@ namespace DAL.Concrete
             var result = new ExpressionConverter<TDalEntity, TEntity>(param, mapperDictionary).Visit(predicate.Body);
             return Expression.Lambda<Func<TEntity, bool>>(result, param);
         }
-#endregion
+        #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    context.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

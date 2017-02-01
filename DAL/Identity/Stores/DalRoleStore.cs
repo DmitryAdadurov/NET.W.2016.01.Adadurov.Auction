@@ -18,6 +18,12 @@ namespace DAL.Identity.Stores
         {
             context = dbcontext;
         }
+
+        /// <summary>
+        /// Creates role.
+        /// </summary>
+        /// <param name="role">Role to add</param>
+        /// <returns></returns>
         public Task CreateAsync(DalRole role)
         {
             if (role == null)
@@ -27,6 +33,11 @@ namespace DAL.Identity.Stores
             return Task.FromResult<object>(null);
         }
 
+        /// <summary>
+        /// Delete role
+        /// </summary>
+        /// <param name="role">Role to delete</param>
+        /// <returns></returns>
         public Task DeleteAsync(DalRole role)
         {
             if (role == null)
@@ -36,6 +47,11 @@ namespace DAL.Identity.Stores
             return Task.FromResult<object>(null);
         }
 
+        /// <summary>
+        /// Searching for role with specified id
+        /// </summary>
+        /// <param name="roleId">id of role</param>
+        /// <returns>DalRole if searching succsess</returns>
         public async Task<DalRole> FindByIdAsync(int roleId)
         {
             if (roleId < 0)
@@ -44,11 +60,21 @@ namespace DAL.Identity.Stores
             return (await context.Set<Role>().SingleOrDefaultAsync(r => r.Id == roleId)).ToDalRole();
         }
 
+        /// <summary>
+        /// Searching for role by name
+        /// </summary>
+        /// <param name="roleName">Name of Role</param>
+        /// <returns>DalRole if searching succsess</returns>
         public async Task<DalRole> FindByNameAsync(string roleName)
         {
             return (await context.Set<Role>().SingleOrDefaultAsync(r => r.Name == roleName)).ToDalRole();
         }
 
+        /// <summary>
+        /// Updates role
+        /// </summary>
+        /// <param name="role">Object with updated information</param>
+        /// <returns></returns>
         public Task UpdateAsync(DalRole role)
         {
             if (role == null)
@@ -61,7 +87,7 @@ namespace DAL.Identity.Stores
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // Для определения избыточных вызовов
+        private bool disposedValue = false; 
 
         protected virtual void Dispose(bool disposing)
         {
@@ -69,29 +95,16 @@ namespace DAL.Identity.Stores
             {
                 if (disposing)
                 {
-                    // TODO: освободить управляемое состояние (управляемые объекты).
+                    context.Dispose();
                 }
-
-                // TODO: освободить неуправляемые ресурсы (неуправляемые объекты) и переопределить ниже метод завершения.
-                // TODO: задать большим полям значение NULL.
 
                 disposedValue = true;
             }
         }
-
-        // TODO: переопределить метод завершения, только если Dispose(bool disposing) выше включает код для освобождения неуправляемых ресурсов.
-        // ~DalRoleStore() {
-        //   // Не изменяйте этот код. Разместите код очистки выше, в методе Dispose(bool disposing).
-        //   Dispose(false);
-        // }
-
-        // Этот код добавлен для правильной реализации шаблона высвобождаемого класса.
+        
         public void Dispose()
-        {
-            // Не изменяйте этот код. Разместите код очистки выше, в методе Dispose(bool disposing).
+        {            
             Dispose(true);
-            // TODO: раскомментировать следующую строку, если метод завершения переопределен выше.
-            // GC.SuppressFinalize(this);
         }
         #endregion
     }
