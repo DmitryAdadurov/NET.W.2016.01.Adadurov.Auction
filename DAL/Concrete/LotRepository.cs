@@ -17,6 +17,12 @@ namespace DAL.Concrete
         public LotRepository(DbContext dbContext) : base(dbContext, new LotDalLotMappers())
         {
         }
+
+        /// <summary>
+        /// Get lot by id
+        /// </summary>
+        /// <param name="key">Id of the lot</param>
+        /// <returns>DalLot if found</returns>
         public async Task<DalLot> GetById(int key)
         {
             return converter.ToDalEntity(await context.Set<Lot>().FirstOrDefaultAsync(t => t.Id == key));

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DAL.Concrete.Exceptions
 {
+    /// <summary>
+    /// Throws if Set for provided entity is not exist
+    /// </summary>
     public class WrongEntityException : Exception
     {
         public WrongEntityException()

@@ -29,6 +29,9 @@ namespace BLL.Services
             SSLEnable = true;
         }
 
+        /// <summary>
+        /// Send email with settings specified in static fields
+        /// </summary>
         public async Task Send()
         {
             SmtpClient smtp = new SmtpClient();

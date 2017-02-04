@@ -329,6 +329,11 @@ namespace DAL.Identity.Stores
             return dalUser.Password;
         }
 
+        /// <summary>
+        /// Check existence if password
+        /// </summary>
+        /// <param name="user">Checking user</param>
+        /// <returns>true if password exist</returns>
         public async Task<bool> HasPasswordAsync(DalUser user)
         {
             if (user.IsNull())

@@ -23,6 +23,11 @@ namespace BLL.Services
             context = uow ?? throw new ArgumentNullException(nameof(uow));
         }
 
+        /// <summary>
+        /// Count of entities matching expression
+        /// </summary>
+        /// <param name="predicate">Expression</param>
+        /// <returns>Count of entities</returns>
         public int Count(Expression<Func<BllBid, bool>> predicate = null)
         {
             if (predicate != null)
@@ -37,6 +42,13 @@ namespace BLL.Services
             return context.BidsRepository.Count();
         }
 
+        /// <summary>
+        /// Get range of bids
+        /// </summary>
+        /// <param name="skip">Number of skiped bids matched the predicate</param>
+        /// <param name="take">Number of bids to take</param>
+        /// <param name="predicate">Expression to match</param>
+        /// <returns>Enumeration with bids matching the predicate</returns>
         public async Task<IEnumerable<BllBid>> GetRange(int skip, int take = 12, Expression<Func<BllBid, bool>> predicate = null)
         {
             Expression<Func<DalBid, bool>> lambda = null;
@@ -51,6 +63,13 @@ namespace BLL.Services
             return (await context.BidsRepository.GetRange(skip, take, lambda)).Select(t => t.ToBllBid());
         }
 
+        /// <summary>
+        /// Place a bet
+        /// </summary>
+        /// <param name="auctionId">Id of the auction</param>
+        /// <param name="userId">Id the user</param>
+        /// <param name="moneyAmount">Count of money</param>
+        /// <returns>true - if succeded</returns>
         public async Task<bool> PlaceBet(int auctionId, int userId, decimal moneyAmount)
         {
             if (userId < 0)
@@ -64,6 +83,13 @@ namespace BLL.Services
             return await PlaceBet(auctionId, user.Login, moneyAmount);
         }
 
+        /// <summary>
+        /// Place a bet
+        /// </summary>
+        /// <param name="auctionId">Id of the auction</param>
+        /// <param name="userName">User login</param>
+        /// <param name="moneyAmount">Count of money</param>
+        /// <returns>true - if succeded</returns>
         public async Task<bool> PlaceBet(int auctionId, string userName, decimal moneyAmount)
         {
             if (auctionId < 0)
@@ -121,6 +147,11 @@ namespace BLL.Services
             }
         }
 
+        /// <summary>
+        /// Removes bet with specified id
+        /// </summary>
+        /// <param name="bidId">Id of the bid</param>
+        /// <returns></returns>
         public async Task RemoveBet(int bidId)
         {
             if (bidId < 0)
@@ -151,11 +182,20 @@ namespace BLL.Services
             await RemoveBet(e.Id);
         }
 
+        /// <summary>
+        /// Get all bids
+        /// </summary>
+        /// <returns>Enumeration with all bids</returns>
         public async Task<IEnumerable<BllBid>> GetAll()
         {
             return (await context.BidsRepository.GetAll()).Select(t => t.ToBllBid());
         }
 
+        /// <summary>
+        /// Get bet by id
+        /// </summary>
+        /// <param name="id">Id of the bet</param>
+        /// <returns>BllBid if id is correct</returns>
         public async Task<BllBid> GetById(int id)
         {
             if (id < 0)
@@ -172,6 +212,10 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Update the bid
+        /// </summary>
+        /// <param name="e">Bid with new info</param>
         public async Task Update(BllBid e)
         {
             if (e == null)

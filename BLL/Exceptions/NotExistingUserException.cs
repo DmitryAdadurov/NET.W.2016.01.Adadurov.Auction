@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BLL.Exceptions
 {
+    /// <summary>
+    /// Throws if user not exist
+    /// </summary>
     public class NotExistingUserException : Exception
     {
         public NotExistingUserException()

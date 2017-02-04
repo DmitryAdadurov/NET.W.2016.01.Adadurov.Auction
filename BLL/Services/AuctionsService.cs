@@ -23,6 +23,11 @@ namespace BLL.Services
             Context = uow ?? throw new ArgumentNullException(nameof(uow));
         }
 
+        /// <summary>
+        /// Count of entities matching expression
+        /// </summary>
+        /// <param name="predicate">Expression</param>
+        /// <returns>Count of entities</returns>
         public int Count(Expression<Func<BllLot, bool>> predicate = null)
         {
             if (predicate != null)
@@ -37,6 +42,12 @@ namespace BLL.Services
             return Context.LotsRepository.Count();
         }
 
+        /// <summary>
+        /// Combining lot info, bids and comments into one object
+        /// </summary>
+        /// <param name="id">Id of a lot</param>
+        /// <param name="take">Number of comments to take</param>
+        /// <returns>Total info about auction</returns>
         public async Task<BllAuction> GetTotalAuctionInfo(int id, int take)
         {
             if (id < 0)
@@ -52,6 +63,11 @@ namespace BLL.Services
             return auction;
         }
 
+        /// <summary>
+        /// Get lot info
+        /// </summary>
+        /// <param name="id">Id of the lot</param>
+        /// <returns>BllLot if id correct</returns>
         public async Task<BllLot> GetLot(int id)
         {
             if (id < 0)
@@ -68,6 +84,11 @@ namespace BLL.Services
             };
         }
 
+        /// <summary>
+        /// Get lots matching predicate
+        /// </summary>
+        /// <param name="predicate">Expression to match</param>
+        /// <returns></returns>
         public async Task<IEnumerable<BllLot>> GetByPredicate(Expression<Func<BllLot, bool>> predicate)
         {
             var param = Expression.Parameter(typeof(DalLot));
@@ -94,6 +115,10 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get all lots
+        /// </summary>
+        /// <returns>Collection with lots</returns>
         public async Task<IEnumerable<BllLot>> GetAll()
         {
             return (await Context.LotsRepository.GetAll()).Select(t => t.ToBllLot());
@@ -112,6 +137,11 @@ namespace BLL.Services
             return auctions;
         }
 
+        /// <summary>
+        /// Create lot
+        /// </summary>
+        /// <param name="e">Lot to create</param>
+        /// <returns>Id of the created lot</returns>
         public async Task<int> Create(BllLot e)
         {
             if (e == null)
@@ -120,11 +150,20 @@ namespace BLL.Services
             return await Context.LotsRepository.Create(e.ToDalLot());
         }
 
+        /// <summary>
+        /// Create lot
+        /// </summary>
+        /// <param name="e">Lot to create</param>
+        /// <returns>Id of the created lot</returns>
         async Task<int> IService<BllAuction, int>.Create(BllAuction e)
         {
             return await Create(e.Lot);
         }
 
+        /// <summary>
+        /// Delete all info about auction (inc. comments, bids)
+        /// </summary>
+        /// <param name="e">Auction to delete</param>
         public async Task Delete(BllAuction e)
         {
             if (e == null || e.Lot == null)
@@ -139,6 +178,10 @@ namespace BLL.Services
             Context.Commit();
         }
 
+        /// <summary>
+        /// Update lot info
+        /// </summary>
+        /// <param name="e">Lot with new information</param>
         public async Task Update(BllLot e)
         {
             if (e == null)
@@ -151,6 +194,10 @@ namespace BLL.Services
                 throw new ArgumentOutOfRangeException(nameof(e));
         }
 
+        /// <summary>
+        /// Update auction info
+        /// </summary>
+        /// <param name="e">Auction to update</param>
         public async Task Update(BllAuction e)
         {
             if (e == null || e.Lot == null)
@@ -159,6 +206,13 @@ namespace BLL.Services
             await Update(e.Lot);
         }
 
+        /// <summary>
+        /// Get range of lots
+        /// </summary>
+        /// <param name="skip">Number of skiped lots matched the predicate</param>
+        /// <param name="take">Number of lots to take</param>
+        /// <param name="predicate">Expression to match</param>
+        /// <returns>Enumeration with lots matching the predicate</returns>
         public async Task<IEnumerable<BllLot>> GetRange(int skip, int take = 12, Expression<Func<BllLot, bool>> predicate = null)
         {
             Expression<Func<DalLot, bool>> lambda = null;

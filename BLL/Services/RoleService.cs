@@ -20,6 +20,11 @@ namespace BLL.Services
             context = uow;
         }
 
+        /// <summary>
+        /// Create new role
+        /// </summary>
+        /// <param name="e">Role to create</param>
+        /// <returns>Id of the created role</returns>
         public async Task<int> Create(BllRole e)
         {
             if (e == null || string.IsNullOrEmpty(e.Name))
@@ -30,6 +35,10 @@ namespace BLL.Services
             return (await context.RoleStore.FindByNameAsync(e.Name)).Id;
         }
 
+        /// <summary>
+        /// Delete the role
+        /// </summary>
+        /// <param name="e">Role to delete</param>
         public async Task Delete(BllRole e)
         {
             if (e == null)
@@ -43,6 +52,11 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get role by id
+        /// </summary>
+        /// <param name="id">Id of the role</param>
+        /// <returns>BllRole if id is correct</returns>
         public async Task<BllRole> GetById(int id)
         {
             return (await context.RoleStore.FindByIdAsync(id)).ToBllRole();
@@ -53,6 +67,10 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Update role
+        /// </summary>
+        /// <param name="e">Role with updated info</param>
         public async Task Update(BllRole e)
         {
             if (e == null)
@@ -61,6 +79,11 @@ namespace BLL.Services
             await context.RoleStore.UpdateAsync(e.ToDalRole());
         }
 
+        /// <summary>
+        /// Find role by name
+        /// </summary>
+        /// <param name="name">Name of the role</param>
+        /// <returns>BllRole if name is correct</returns>
         public async Task<BllRole> FindByNameAsync(string name)
         {
             if (string.IsNullOrEmpty(name))

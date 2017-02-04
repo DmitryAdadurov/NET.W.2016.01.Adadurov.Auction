@@ -183,6 +183,11 @@ namespace DAL.Concrete
         }
 
         #region Private Service Methods
+
+        /// <summary>
+        /// Check existence of Set for provided entities
+        /// </summary>
+        /// <returns>true - if set exists</returns>
         private bool Exists()
         {
             string entityName = typeof(TEntity).Name;
@@ -191,6 +196,11 @@ namespace DAL.Concrete
             return workspace.GetItems<EntityType>(DataSpace.CSpace).Any(t => t.Name == entityName);
         }
 
+        /// <summary>
+        /// Service method for calling other methods that converts Expression
+        /// </summary>
+        /// <param name="predicate">Expression to convert</param>
+        /// <returns>Converted expression</returns>
         private Expression<Func<TEntity, bool>> ConvertExpression(Expression<Func<TDalEntity, bool>> predicate)
         {
             var param = Expression.Parameter(typeof(TEntity));

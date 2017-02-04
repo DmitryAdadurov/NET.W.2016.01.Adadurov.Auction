@@ -30,6 +30,11 @@ namespace BLL.Services
             hasher = passwordsHasher ?? throw new ArgumentNullException(nameof(passwordsHasher));
         }
 
+        /// <summary>
+        /// Find user by login
+        /// </summary>
+        /// <param name="userName">User login</param>
+        /// <returns>null if not found</returns>
         public async Task<BllUser> FindByName(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -38,6 +43,12 @@ namespace BLL.Services
             return (await context.UserStore.FindByNameAsync(userName)).ToBllUser();
         }
 
+        /// <summary>
+        /// Create IIdentity for specifyed user
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="isAuthenticated">Is authenticated</param>
+        /// <returns></returns>
         public Identity CreateIdentity(BllUser user, bool isAuthenticated = false)
         {
             Identity userIdentity = new Identity(DefaultAuthenticationTypes.ApplicationCookie)
@@ -54,6 +65,10 @@ namespace BLL.Services
             return (int)(await Register(user));
         }
 
+        /// <summary>
+        /// Delete user
+        /// </summary>
+        /// <param name="user">User</param>
         public async Task Delete(BllUser user)
         {
             ThrowIfDisposed();
@@ -70,6 +85,11 @@ namespace BLL.Services
             }
         }
 
+        /// <summary>
+        /// Get user id
+        /// </summary>
+        /// <param name="userName">User login</param>
+        /// <returns>Id if user login correct</returns>
         public async Task<int> GetId(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -78,6 +98,10 @@ namespace BLL.Services
             return (await context.UserStore.FindByNameAsync(userName)).Id;
         }
 
+        /// <summary>
+        /// Update user info
+        /// </summary>
+        /// <param name="user">User with updated information</param>
         public async Task Update(BllUser user)
         {
             ThrowIfDisposed();
@@ -94,6 +118,11 @@ namespace BLL.Services
             }
         }
 
+        /// <summary>
+        /// Verifying user email
+        /// </summary>
+        /// <param name="token">Email verification token</param>
+        /// <returns>true - if succeded</returns>
         public async Task<bool> VerifyEmail(string token)
         {
             if (string.IsNullOrEmpty(token))
@@ -119,6 +148,11 @@ namespace BLL.Services
                 throw new ObjectDisposedException(GetType().Name);
         }
 
+        /// <summary>
+        /// Create new user
+        /// </summary>
+        /// <param name="user">New user</param>
+        /// <returns>Id of created user</returns>
         public async Task<int> Register(BllUser user)
         {
             ThrowIfDisposed();
@@ -142,6 +176,12 @@ namespace BLL.Services
             }
         }
 
+        /// <summary>
+        /// Authenticate a user
+        /// </summary>
+        /// <param name="login">User login</param>
+        /// <param name="password">User password</param>
+        /// <returns>null if failed</returns>
         public async Task<BllUser> Authenticate(string login, string password)
         {
             if (string.IsNullOrEmpty(login))
@@ -160,7 +200,12 @@ namespace BLL.Services
             else
                 return null;
         }
-
+        
+        /// <summary>
+        /// Provide roles for the specified user
+        /// </summary>
+        /// <param name="user">User to authorize</param>
+        /// <returns>IPrincipal for user if succeded</returns>
         public Task<Principal> Authorize(BllUser user)
         {
             if (user == null)
@@ -172,6 +217,12 @@ namespace BLL.Services
             var identity = CreateIdentity(user, true);
             return Task.FromResult<Principal>(new Principal(identity, user.Roles));
         }
+
+        /// <summary>
+        /// Get user by id
+        /// </summary>
+        /// <param name="id">Id of the user</param>
+        /// <returns>null if fails</returns>
         public async Task<BllUser> GetById(int id)
         {
             if (id < 0)
@@ -180,6 +231,11 @@ namespace BLL.Services
             return (await context.UserStore.FindByIdAsync(id)).ToBllUser();
         }
 
+        /// <summary>
+        /// Get user matching the predicate
+        /// </summary>
+        /// <param name="predicate">Expression to match</param>
+        /// <returns>BllUser if succeded</returns>
         public async Task<BllUser> GetByPredicate(Expression<Func<BllUser, bool>> predicate)
         {
             var param = Expression.Parameter(typeof(BllUser));
@@ -201,6 +257,10 @@ namespace BLL.Services
             return u.ToBllUser();
         }
 
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns>Enumeration with all users</returns>
         public async Task<IEnumerable<BllUser>> GetAll()
         {
             return (await context.UserStore.GetAll()).Select(t => t.ToBllUser());

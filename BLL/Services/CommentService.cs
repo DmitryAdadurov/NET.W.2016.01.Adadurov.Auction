@@ -22,6 +22,13 @@ namespace BLL.Services
             context = uow ?? throw new ArgumentNullException(nameof(uow));
         }
 
+        /// <summary>
+        /// Get range of comments
+        /// </summary>
+        /// <param name="skip">Number of skiped comments matched the predicate</param>
+        /// <param name="take">Number of comments to take</param>
+        /// <param name="predicate">Expression to match</param>
+        /// <returns>Enumeration with comments matching the predicate</returns>
         public async Task<IEnumerable<BllComment>> GetRange(int skip, int take = 12, Expression<Func<BllComment, bool>> predicate = null)
         {
             Expression<Func<DalCommentary, bool>> lambda = null;
@@ -36,6 +43,13 @@ namespace BLL.Services
             return (await context.CommentsRepository.GetRange(skip, take, lambda)).Select(t => t.ToBllComment());
         }
 
+        /// <summary>
+        /// Add comment
+        /// </summary>
+        /// <param name="text">Comment text</param>
+        /// <param name="userName">User login</param>
+        /// <param name="lotId">Id of the lot</param>
+        /// <returns>Id of added comment</returns>
         public async Task<int> PostComment(string text, string userName, int lotId)
         {
             if (string.IsNullOrEmpty(text))
@@ -63,6 +77,10 @@ namespace BLL.Services
             return await PostComment(e.Text, userName, e.Lot);
         }
 
+        /// <summary>
+        /// Delete comment
+        /// </summary>
+        /// <param name="commentId">Id of the comment</param>
         public async Task Delete(int commentId)
         {
             var comment = (await context.CommentsRepository.GetByPredicate(t => t.Id == commentId)).FirstOrDefault();
@@ -80,6 +98,11 @@ namespace BLL.Services
             return (await context.CommentsRepository.GetAll()).Select(t => t.ToBllComment());
         }
 
+        /// <summary>
+        /// Get comment by id
+        /// </summary>
+        /// <param name="id">Id of the comment</param>
+        /// <returns>BllComment if id is correct</returns>
         public async Task<BllComment> GetById(int id)
         {
             return (await context.CommentsRepository.GetByPredicate(t => t.Id == id)).FirstOrDefault().ToBllComment();
@@ -90,6 +113,11 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Update comment
+        /// </summary>
+        /// <param name="e">Updated comment entity</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task Update(BllComment e)
         {
             if (e == null)

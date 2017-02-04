@@ -8,6 +8,9 @@ namespace DAL.Concrete.Exceptions
 {
     public class DatabaseErrorException : Exception
     {
+        /// <summary>
+        /// Throws if database not exists
+        /// </summary>
         public DatabaseErrorException()
         {
         }

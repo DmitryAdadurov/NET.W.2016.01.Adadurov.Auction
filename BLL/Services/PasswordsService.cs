@@ -11,6 +11,11 @@ namespace BLL.Services
 {
     public class PasswordsService : IPasswordsHasher
     {
+        /// <summary>
+        /// Gets hash of the password
+        /// </summary>
+        /// <param name="password">Plain password</param>
+        /// <returns>Password hash</returns>
         public string HashPassword(string password)
         {
             byte[] salt;
@@ -26,6 +31,11 @@ namespace BLL.Services
             return Convert.ToBase64String(hashBytes);
         }
 
+        /// <summary>
+        /// Verifying provided plain password with provided password hash
+        /// </summary>
+        /// <param name="hashedPassword">Password hash</param>
+        /// <param name="providedPassword">Plain password to check</param>
         public PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
             byte[] hashBytes = Convert.FromBase64String(hashedPassword);
